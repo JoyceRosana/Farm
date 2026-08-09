@@ -153,19 +153,50 @@
             transform-origin: 0 0;
         }
 
-        /* ESTRUTURAS FIXAS */
-        .objeto {
-            position: absolute;
-            z-index: 10;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .objeto:hover { transform: scale(1.03); }
-        .objeto img { width: 100%; height: auto; pointer-events: none; }
-        
-        .galpao { width: 500px; top: 1000px; left: 2200px; }       
-        .cooperativa { width: 500px; top: 900px; left: 2200px; }
-        .cisterna { width: 400px; top: 1000px; left: 2400px; }
+        /* =========================================================
+   IMÓVEIS DA FAZENDA
+   Apenas posicionamento e interação.
+   ========================================================= */
+
+.objeto {
+    position: absolute;
+    z-index: 50;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.objeto:hover {
+    transform: scale(1.03);
+    filter: brightness(1.05);
+}
+
+.objeto img {
+    width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
+}
+
+/* Galpão */
+.galpao {
+    width: 600px;
+    top: 550px;
+    left: 150px;
+}
+
+/* Cooperativa */
+.cooperativa {
+    width: 700px;
+    top: 500px;
+    left: 2305px;
+}
+
+/* Cisterna */
+.cisterna {
+    width: 430px;
+    top: 670px;
+    left: -50px;
+}
 
         /* UMA ÚNICA GRANDE PLANTAÇÃO ORGANIZADA EM 20 COLUNAS */
         .grid-plantacao {
