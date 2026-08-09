@@ -198,25 +198,129 @@
     left: -50px;
 }
 
-        /* UMA ÚNICA GRANDE PLANTAÇÃO ORGANIZADA EM 20 COLUNAS */
-        .grid-plantacao {
-            display: grid;
-            grid-template-columns: repeat(20, 85px); /* Alterado para 20 colunas */
-            grid-gap: 12px;
-            background: rgba(40, 26, 13, 0.6);
-            padding: 15px;
-            border-radius: 12px;
-            border: 3px solid var(--wood-dark);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-        
-        /* Posicionamento estratégico da mega plantação na metade de cima do mapa */
-        .plantacao-unica { 
-            position: absolute; 
-            top: 50px; 
-            left: 60px; 
-            z-index: 20; 
-        }
+/* =========================================================
+   PLANTAÇÕES DA FAZENDA
+   ========================================================= */
+
+
+/* =========================================================
+   PLANTAÇÃO SUPERIOR
+   17 COLUNAS × 6 LINHAS = 102 TERRAS
+   ========================================================= */
+
+.grid-superior {
+    position: absolute;
+
+    top: 310px;
+    left: 700px;
+
+    display: grid;
+
+    grid-template-columns: repeat(17, 85px);
+    grid-template-rows: repeat(6, 85px);
+
+    gap: 12px;
+    padding: 15px;
+
+    background: rgba(40, 26, 13, 0.6);
+
+    border: 3px solid var(--wood-dark);
+    border-radius: 12px;
+
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+
+    z-index: 20;
+}
+
+
+/* =========================================================
+   PLANTAÇÃO INFERIOR
+   28 COLUNAS × 8 LINHAS = 224 TERRAS
+   ========================================================= */
+
+.grid-inferior {
+    position: absolute;
+
+    top: 1080px;
+    left: 120px;
+
+    display: grid;
+
+    grid-template-columns: repeat(28, 85px);
+    grid-template-rows: repeat(8, 85px);
+
+    gap: 12px;
+    padding: 15px;
+
+    background: rgba(40, 26, 13, 0.6);
+
+    border: 3px solid var(--wood-dark);
+    border-radius: 12px;
+
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+
+    z-index: 20;
+}
+
+
+/* =========================================================
+   TERRENOS
+   ========================================================= */
+
+.plot {
+    width: 85px;
+    height: 85px;
+
+    box-sizing: border-box;
+
+    background: #4a3319;
+
+    border: 2px solid #3a220f;
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 0.2s;
+}
+
+
+/* Efeito ao passar o mouse */
+
+.plot:hover {
+    background: #5c3f21;
+    border-color: var(--wood-light);
+}
+
+
+/* =========================================================
+   TERRENO MOLHADO
+   ========================================================= */
+
+.plot.wet {
+    background: #224466 !important;
+
+    border-color: #3498db !important;
+
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+
+/* =========================================================
+   IMAGEM DA PLANTA
+   ========================================================= */
+
+.plot-plant-img {
+    width: 80%;
+    height: 80%;
+
+    object-fit: contain;
+
+    pointer-events: none;
+}
 
         .plot {
             width: 85px;
@@ -523,65 +627,7 @@
             activeBalloonPlotId: null
         };
 
-        let currentZoom = 0.7; // Começa um pouco mais afastado para ver toda a grande plantação
 
-        /* =========================================================
-   CRIAÇÃO DAS TERRAS
-   SUPERIOR: 102
-   INFERIOR: 224
-   TOTAL: 326
-   ========================================================= */
-
-const superior = document.getElementById("plantacao-superior");
-const inferior = document.getElementById("plantacao-inferior");
-
-let plotId = 1;
-
-
-/* ---------- PLANTAÇÃO SUPERIOR ---------- */
-
-for (let i = 0; i < 102; i++) {
-
-    const plot = document.createElement("div");
-
-    plot.className = "plot";
-    plot.dataset.id = plotId;
-
-    superior.appendChild(plot);
-
-    gameState.plots[plotId] = {
-        id: plotId,
-        crop: null,
-        stage: 0,
-        timer: 0,
-        isWet: false
-    };
-
-    plotId++;
-}
-
-
-/* ---------- PLANTAÇÃO INFERIOR ---------- */
-
-for (let i = 0; i < 224; i++) {
-
-    const plot = document.createElement("div");
-
-    plot.className = "plot";
-    plot.dataset.id = plotId;
-
-    inferior.appendChild(plot);
-
-    gameState.plots[plotId] = {
-        id: plotId,
-        crop: null,
-        stage: 0,
-        timer: 0,
-        isWet: false
-    };
-
-    plotId++;
-}
         /* MOTOR DE TOQUE E ARRRASTO (POINTER EVENTS) */
         const viewport = document.getElementById('game-viewport');
         const map = document.getElementById('farm-map');
