@@ -293,33 +293,26 @@
 }
 
 
+.plot:hover{
+   background:#5c3f21;
+   border-color:var(--wood-light);
+}
 
 
-        .plot {
-            width: 85px;
-            height: 85px;
-            background: #4a3319;
-            border: 2px solid #3a220f;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .plot:hover { background: #5c3f21; border-color: var(--wood-light); }
-        .plot.wet {
-            background: #224466 !important;
-            border-color: #3498db !important;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
+.plot.wet{
+   background:#224466 !important;
+   border-color:#3498db !important;
+   box-shadow:inset 0 0 10px rgba(0,0,0,.5);
+}
 
-        .plot-plant-img {
-            width: 85%;
-            height: 85%;
-            object-fit: contain;
-            pointer-events: none;
-        }
+
+.plot-plant-img{
+   width:80%;     /* um pouco maior */
+   height:80%;
+   object-fit:contain;
+   pointer-events:none;
+}
+
 
         /* BALÃO DE MADEIRA */
         .wood-balloon {
