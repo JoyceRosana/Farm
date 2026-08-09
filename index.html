@@ -493,7 +493,6 @@
              <div id="plantacao-superior" class="grid-superior"></div>
              <div id="plantacao-inferior" class="grid-inferior"></div>
              <div id="balloon-layer"></div>
-             <div id="balloon-layer"></div>
         </div>
     </div>
 
@@ -593,6 +592,79 @@
             activeBalloonPlotId: null
         };
 
+/* =========================================================
+   CRIAÇÃO DAS TERRAS DA FAZENDA
+   ========================================================= */
+
+function criarTerras() {
+
+    const plantacaoSuperior = document.getElementById('plantacao-superior');
+    const plantacaoInferior = document.getElementById('plantacao-inferior');
+
+    /* ---------- PLANTAÇÃO SUPERIOR ----------
+       17 colunas × 6 linhas = 102 terras
+    */
+
+    let id = 0;
+
+    for (let linha = 0; linha < 6; linha++) {
+
+        for (let coluna = 0; coluna < 17; coluna++) {
+
+            const plot = document.createElement('div');
+
+            plot.className = 'plot';
+
+            plot.dataset.id = id;
+
+            plantacaoSuperior.appendChild(plot);
+
+            gameState.plots[id] = {
+                id: id,
+                crop: null,
+                stage: 0,
+                timer: 0,
+                isWet: false
+            };
+
+            id++;
+        }
+    }
+
+
+    /* ---------- PLANTAÇÃO INFERIOR ----------
+       28 colunas × 8 linhas = 224 terras
+    */
+
+    for (let linha = 0; linha < 8; linha++) {
+
+        for (let coluna = 0; coluna < 28; coluna++) {
+
+            const plot = document.createElement('div');
+
+            plot.className = 'plot';
+
+            plot.dataset.id = id;
+
+            plantacaoInferior.appendChild(plot);
+
+            gameState.plots[id] = {
+                id: id,
+                crop: null,
+                stage: 0,
+                timer: 0,
+                isWet: false
+            };
+
+            id++;
+        }
+    }
+}
+
+
+/* Criar todas as terras antes de iniciar a interação */
+
+criarTerras();
 
         /* MOTOR DE TOQUE E ARRRASTO (POINTER EVENTS) */
         const viewport = document.getElementById('game-viewport');
