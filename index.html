@@ -802,9 +802,6 @@ criarTerras();
             document.getElementById('active-mode-indicator').innerText = `SEMEANDO: ${CROPS[cropKey].name}`;
             viewport.className = 'mode-planting';
             
-            const cursor = document.getElementById('custom-cursor');
-            cursor.src = '/img/maozinha.png';
-            cursor.style.display = 'block';
 
             executePlanting(gameState.activeBalloonPlotId, document.querySelector(`.plot[data-id="${gameState.activeBalloonPlotId}"]`));
             closeActiveBalloon();
