@@ -461,23 +461,28 @@
     height: 75vh;
     max-height: 75vh;
     overflow: hidden;
+
+    /* mantém centralizado horizontalmente */
+    left: 50%;
 }
 
-/* Cabeçalho usado para mover o menu */
 #modal-cooperativa .modal-header {
     cursor: grab;
     user-select: none;
+    touch-action: none;
 }
 
 #modal-cooperativa .modal-header:active {
     cursor: grabbing;
 }
 
-/* X continua igual aos outros menus */
 #modal-cooperativa .close-btn {
     cursor: pointer;
     position: relative;
-    z-index: 10;
+    z-index: 20;
+
+    /* o X não participa do arraste */
+    touch-action: auto;
 }
     </style>
 </head>
@@ -1008,12 +1013,20 @@ criarTerras();
     openModal('modal-galpao');
 }
 
-        function openCooperativa() {
+ function openCooperativa() {
     closeActiveBalloon();
     exitSpecialModes();
 
     const modal = document.getElementById('modal-cooperativa');
 
+    /* Sempre começa no centro */
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+
+    renderCooperativa();
+    openModal('modal-cooperativa');
+}
     // Sempre abre centralizado
     modal.style.top = '50%';
     modal.style.transform = 'translate(-50%, -50%)';
@@ -1065,7 +1078,8 @@ criarTerras();
 }
 
 /* =========================================================
-   MOVIMENTO VERTICAL DO MENU DA COOPERATIVA
+   ARRASTAR MENU DA COOPERATIVA
+   SOMENTE PARA CIMA E PARA BAIXO
    ========================================================= */
 
 const cooperativaModal = document.getElementById('modal-cooperativa');
@@ -1075,41 +1089,47 @@ let arrastandoCooperativa = false;
 let inicioY = 0;
 let inicioTop = 0;
 
+
+/* COMEÇA O ARRASTE */
+
 cooperativaHeader.addEventListener('pointerdown', function(e) {
 
-    // Se clicou no X, não arrasta o menu
-    if (e.target.closest('.close-btn')) return;
+    // Se clicou no X, não arrasta
+    if (e.target.closest('.close-btn')) {
+        return;
+    }
 
     arrastandoCooperativa = true;
 
     inicioY = e.clientY;
 
-    inicioTop = cooperativaModal.getBoundingClientRect().top;
+    inicioTop = cooperativaModal.offsetTop;
 
     cooperativaHeader.setPointerCapture(e.pointerId);
+
+    cooperativaHeader.style.cursor = 'grabbing';
 
     e.preventDefault();
 });
 
 
+/* MOVE O MENU */
+
 cooperativaHeader.addEventListener('pointermove', function(e) {
 
-    if (!arrastandoCooperativa) return;
+    if (!arrastandoCooperativa) {
+        return;
+    }
 
-    const movimentoY = e.clientY - inicioY;
+    const deslocamento = e.clientY - inicioY;
 
-    let novoTop = inicioTop + movimentoY;
+    let novoTop = inicioTop + deslocamento;
 
     const alturaTela = window.innerHeight;
     const alturaMenu = cooperativaModal.offsetHeight;
 
     /*
-       O menu ocupa 75% da altura.
-
-       Portanto:
-       12,5% de margem em cima
-       75% de menu
-       12,5% de margem embaixo
+       12,5% de espaço livre em cada extremidade.
     */
 
     const margem = alturaTela * 0.125;
@@ -1119,34 +1139,47 @@ cooperativaHeader.addEventListener('pointermove', function(e) {
     const limiteInferior =
         alturaTela - alturaMenu - margem;
 
-    // Impede o menu de sair da área permitida
-    novoTop = Math.max(
-        limiteSuperior,
-        Math.min(novoTop, limiteInferior)
-    );
 
-    // Mantém a posição horizontal centralizada
+    /* Impede o menu de sair da área permitida */
+
+    if (novoTop < limiteSuperior) {
+        novoTop = limiteSuperior;
+    }
+
+    if (novoTop > limiteInferior) {
+        novoTop = limiteInferior;
+    }
+
+
+    /* Aplica a nova posição */
+
     cooperativaModal.style.top = novoTop + 'px';
+
     cooperativaModal.style.left = '50%';
 
-    // Remove apenas o deslocamento vertical do transform
     cooperativaModal.style.transform = 'translateX(-50%)';
 });
 
+
+/* TERMINA O ARRASTE */
 
 cooperativaHeader.addEventListener('pointerup', function(e) {
 
     arrastandoCooperativa = false;
 
+    cooperativaHeader.style.cursor = 'grab';
+
     try {
         cooperativaHeader.releasePointerCapture(e.pointerId);
-    } catch {}
+    } catch (erro) {}
 });
 
 
 cooperativaHeader.addEventListener('pointercancel', function() {
 
     arrastandoCooperativa = false;
+
+    cooperativaHeader.style.cursor = 'grab';
 
 });
         function sellSeed(key) {
