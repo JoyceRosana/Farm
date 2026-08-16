@@ -585,7 +585,7 @@
             water: 100,
             maxWater: 200,
             inventory: { milho: 0, soja: 0, tomate: 0, cenoura: 0, alface: 0 },
-            seeds: { milho: 5, soja: 5, tomate: 5, cenoura: 5, alface: 5 },
+            seeds: { milho: 10, soja: 10, tomate: 10, cenoura: 10, alface: 10 },
             plots: {},
             currentMode: 'normal',
             selectedCrop: null,
@@ -761,12 +761,19 @@ criarTerras();
 
             let html = '';
             for (let k in CROPS) {
-                html += `
-                    <div class="crop-option" onclick="startContinuousPlanting('${k}')">
-                        <img src="${CROPS[k].img_adulte}">
-                        <div>${CROPS[k].name}</div>
-                    </div>`;
-            }
+    const quantidade = gameState.seeds[k];
+    const semSementes = quantidade <= 0;
+
+    html += `
+        <div class="crop-option"
+             onclick="${semSementes ? '' : `startContinuousPlanting('${k}')`}"
+             style="${semSementes ? 'opacity:0.45; cursor:not-allowed;' : ''}">
+             
+            <img src="${CROPS[k].img_adulte}">
+            <div>${CROPS[k].name}</div>
+            <div>🌱 ${quantidade}</div>
+        </div>`;
+}
             balloon.innerHTML = html;
             
             balloon.style.left = (plotElement.offsetLeft + plotElement.parentElement.offsetLeft + 40) + 'px';
@@ -829,12 +836,35 @@ criarTerras();
         }
 
         function executePlanting(id, plotElement) {
-            const cropKey = gameState.selectedCrop;
-            if (!cropKey || gameState.seeds[cropKey] <= 0) return;
-            gameState.seeds[cropKey]--;
-            gameState.plots[id] = { id: id, crop: cropKey, stage: 1, timer: 0, isWet: false };
-            plotElement.innerHTML = `<img class="plot-plant-img" src="${CROPS[cropKey].img_broto}">`;
-        }
+    const cropKey = gameState.selectedCrop;
+
+    if (!cropKey) return;
+
+    if (gameState.seeds[cropKey] <= 0) {
+        alert(`Sem sementes de ${CROPS[cropKey].name}! Compre na Cooperativa.`);
+        exitSpecialModes();
+        return;
+    }
+
+    // Gasta uma semente
+    gameState.seeds[cropKey]--;
+
+    // Cria a plantação
+    gameState.plots[id] = {
+        id: id,
+        crop: cropKey,
+        stage: 1,
+        timer: 0,
+        isWet: false
+    };
+
+    plotElement.innerHTML = `
+        <img class="plot-plant-img" src="${CROPS[cropKey].img_broto}">
+    `;
+
+    // Atualiza as interfaces
+    updateHUD();
+}
 
         function irrigatePlot(id, plotElement) {
             if (gameState.water >= 10) {
@@ -922,18 +952,34 @@ criarTerras();
 
         /* CONSTRUÇÕES E MERCADO */
         function openGalpao() {
-            closeActiveBalloon(); exitSpecialModes();
-            const container = document.getElementById('stock-list');
-            container.innerHTML = '';
-            for (let k in gameState.inventory) {
-                container.innerHTML += `
-                    <div class="item-row">
-                        <span>🥬 Recurso: ${CROPS[k].name}</span>
-                        <span>${gameState.inventory[k]} estocados</span>
-                    </div>`;
-            }
-            openModal('modal-galpao');
-        }
+    closeActiveBalloon();
+    exitSpecialModes();
+
+    const container = document.getElementById('stock-list');
+    container.innerHTML = '';
+
+    // SEMENTES
+    for (let k in gameState.seeds) {
+        container.innerHTML += `
+            <div class="item-row">
+                <span>🌱 Sementes de ${CROPS[k].name}</span>
+                <span>${gameState.seeds[k]} unidades</span>
+            </div>
+        `;
+    }
+
+    // PLANTAS COLHIDAS
+    for (let k in gameState.inventory) {
+        container.innerHTML += `
+            <div class="item-row">
+                <span>🌾 ${CROPS[k].name}</span>
+                <span>${gameState.inventory[k]} estocados</span>
+            </div>
+        `;
+    }
+
+    openModal('modal-galpao');
+}
 
         function openCooperativa() {
             closeActiveBalloon(); exitSpecialModes();
@@ -970,11 +1016,18 @@ criarTerras();
         }
 
         function buySeed(key) {
-            if (gameState.money >= CROPS[key].seedPrice) {
-                gameState.money -= CROPS[key].seedPrice; gameState.seeds[key]++;
-                updateHUD(); renderCooperativa();
-            } else { alert("Saldo insuficiente!"); }
-        }
+    const price = CROPS[key].seedPrice;
+
+    if (gameState.money >= price) {
+        gameState.money -= price;
+        gameState.seeds[key]++;
+
+        updateHUD();
+        renderCooperativa();
+    } else {
+        alert("Saldo insuficiente!");
+    }
+}
 
         function sellSeed(key) {
             if (gameState.seeds[key] > 0) {
